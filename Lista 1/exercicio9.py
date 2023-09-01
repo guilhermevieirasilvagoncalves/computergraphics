@@ -5,17 +5,39 @@ from OpenGL.GLUT import *
 angle = 0
 fAspect = 0
 
-xf = 0
-yf = 0
+rot_teapot1 = 0
+rot_teapot2 = 0
+rot_teapot2_center = 0
 
 def Desenha():
+    global rot_teapot1, rot_teapot2, rot_teapot2_center
+    
     glClear(GL_COLOR_BUFFER_BIT)
-    glColor3f(1.0, 0.0, 1.0)
+    
     glPushMatrix()
-    glTranslatef(xf,y0.0)
+    glColor3f(1.0,0.0,0.0)
+    glRotate(rot_teapot1, 0.0, 1.0, 0.0)
     glutWireTeapot(50.0)
     glPopMatrix()
+    
+    glPushMatrix()
+    glRotate(rot_teapot2_center, 0.0, 1.0, 0.0)
+    glTranslate(150, 0, 100)
+    glColor3f(1.0,1.0,0.0)
+    glutWireTeapot(50.0)
+    glPopMatrix()
+    
     glutSwapBuffers()
+
+def Timer(value):
+    global rot_teapot1, rot_teapot2, rot_teapot2_center
+    
+    rot_teapot1 += 1  # Incrementa a rotação do primeiro teapot
+    rot_teapot2_center += 0.5  # Incrementa a rotação do segundo teapot em torno do primeiro
+    rot_teapot2 += 2  # Incrementa a rotação do segundo teapot
+    
+    glutPostRedisplay()
+    glutTimerFunc(30, Timer, 0)  # Configura o próximo intervalo de atualização
 
 def EspecificaParametrosVisualizacao():
     glMatrixMode(GL_PROJECTION)
@@ -26,10 +48,9 @@ def EspecificaParametrosVisualizacao():
     gluLookAt(0, 0, 800, 0, 0, 0, 0, 1, 0)
     
 def Inicializa():
-    global angle;
+    global angle
     glClearColor(0.0, 0.0, 0.0, 1.0)
     angle = 45
-
 
 def AlteraTamanhoJanela(w, h):
     if h == 0:
@@ -39,37 +60,14 @@ def AlteraTamanhoJanela(w, h):
     fAspect = w / h
     EspecificaParametrosVisualizacao()
 
-# def GerenciaTeclado(key, x,y):
-#     global angle
-#     if key == b'w':
-#         if angle >= 10:
-#                 angle -= 5
-#     if key == b's':
-#         if angle <= 130:
-#                 angle += 5
-#     glutPostRedisplay()            
-        
-
-def GerenciaMouse(button, state, x, y):
-    global xf,yf
-
-    if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
-        xf = x - glutGet(GLUT_WINDOW_WIDTH) // 2
-        yf = glutGet(GLUT_WINDOW_HEIGHT) // 2 - y
-        
-    EspecificaParametrosVisualizacao()
-    glutPostRedisplay()
-    
-
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
-    glutInitWindowSize(350, 300)
+    glutInitWindowSize(700, 500)
     glutCreateWindow("Visualizacao 3D")
     glutDisplayFunc(Desenha)
     glutReshapeFunc(AlteraTamanhoJanela)
-    # glutKeyboardFunc(GerenciaTeclado)
-    glutMouseFunc(GerenciaMouse)
+    glutTimerFunc(30, Timer, 0)  # Configura o primeiro intervalo de atualização
     Inicializa()
     glutMainLoop()
  
