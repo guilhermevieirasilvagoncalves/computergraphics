@@ -41,9 +41,9 @@ def Desenha():
     else:
         rot -= 10
 
-    rotation_matrix_x = rotate_matrix('y', rot)
+    rotation_matrix_y = rotate_matrix('y', rot)
 
-    glMultMatrixf(rotation_matrix_x)
+    glMultMatrixf(rotation_matrix_y)
 
     glutWireTeapot(50.0)
 

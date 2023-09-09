@@ -1,43 +1,50 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+import math 
+import numpy as np
 
 angle = 0
 fAspect = 0
 
-rot_teapot1 = 0
-rot_teapot2 = 0
-rot_teapot2_center = 0
+def rotate_matrix(axis, angle):
+    radians = math.radians(angle)
+    if axis == 'x':
+        return np.array([[1, 0, 0, 0],
+                         [0, math.cos(radians), -math.sin(radians), 0],
+                         [0, math.sin(radians), math.cos(radians), 0],
+                         [0, 0, 0, 1]])
+    elif axis == 'y':
+        return np.array([[math.cos(radians), 0, math.sin(radians), 0],
+                         [0, 1, 0, 0],
+                         [-math.sin(radians), 0, math.cos(radians), 0],
+                         [0, 0, 0, 1]])
+    elif axis == 'z':
+        return np.array([[math.cos(radians), -math.sin(radians), 0, 0],
+                         [math.sin(radians), math.cos(radians), 0, 0],
+                         [0, 0, 1, 0],
+                         [0, 0, 0, 1]])
 
 def Desenha():
-    global rot_teapot1, rot_teapot2, rot_teapot2_center
-    
     glClear(GL_COLOR_BUFFER_BIT)
     
     glPushMatrix()
     glColor3f(1.0,0.0,0.0)
-    glRotate(rot_teapot1, 0.0, 1.0, 0.0)
+    rotation_matrix_y = rotate_matrix('z', 70)
+    glMultMatrixf(rotation_matrix_y)
     glutWireTeapot(50.0)
     glPopMatrix()
     
     glPushMatrix()
-    glRotate(rot_teapot2_center, 0.0, 1.0, 0.0)
-    glTranslate(150, 0, 100)
-    glColor3f(1.0,1.0,0.0)
+    glTranslate(150, 0, 0)
+    glColor3f(1.0,0.0,0.0)
+    rotation_matrix_y = rotate_matrix('z', 35)
+    glMultMatrixf(rotation_matrix_y)
+    glMultMatrixf(rotation_matrix_y)
     glutWireTeapot(50.0)
     glPopMatrix()
     
     glutSwapBuffers()
-
-def Timer(value):
-    global rot_teapot1, rot_teapot2, rot_teapot2_center
-    
-    rot_teapot1 += 1  # Incrementa a rotação do primeiro teapot
-    rot_teapot2_center += 2.5  # Incrementa a rotação do segundo teapot em torno do primeiro
-    rot_teapot2 += 2  # Incrementa a rotação do segundo teapot
-    
-    glutPostRedisplay()
-    glutTimerFunc(30, Timer, 0)  # Configura o próximo intervalo de atualização
 
 def EspecificaParametrosVisualizacao():
     glMatrixMode(GL_PROJECTION)
@@ -67,7 +74,6 @@ def main():
     glutCreateWindow("Visualizacao 3D")
     glutDisplayFunc(Desenha)
     glutReshapeFunc(AlteraTamanhoJanela)
-    glutTimerFunc(30, Timer, 0)  # Configura o primeiro intervalo de atualização
     Inicializa()
     glutMainLoop()
  
