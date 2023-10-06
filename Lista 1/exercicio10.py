@@ -4,35 +4,41 @@ from OpenGL.GLUT import *
 
 angle = 0
 fAspect = 0
+rot_teapot = 0
 
 def Desenha():
-    
+    global rot_teapot
     glClear(GL_COLOR_BUFFER_BIT)
     
     glPushMatrix()
     glColor3f(1.0,0.0,0.0)
+    glRotate(rot_teapot, 0.0, 1.0, 0.0)
     glutWireTeapot(50.0)
     glPopMatrix()
     
     glPushMatrix()
+    glRotate(rot_teapot, 0.0, 1.0, 0.0)
     glTranslate(0, 150, 20)
     glColor3f(1.0,1.0,1.0)
     glutWireTeapot(50.0)
     glPopMatrix()
     
     glPushMatrix()
+    glRotate(rot_teapot, 0.0, 1.0, 0.0)
     glTranslate(300, -150, 20)
     glColor3f(0.5,1.0,0.5)
     glutWireTeapot(50.0)
     glPopMatrix()
     
     glPushMatrix()
+    glRotate(rot_teapot, 0.0, 1.0, 0.0)
     glTranslate(300, 0, 30)
     glColor3f(1.0,1.0,0.0)
     glutWireCube(50.0)
     glPopMatrix()
     
     glPushMatrix()
+    glRotate(rot_teapot, 0.0, 1.0, 0.0)
     glTranslate(-300, 0, 30)
     glColor3f(0.0,1.0,1.0)
     glutWireSphere(50.0, 10, 20)
@@ -62,6 +68,14 @@ def AlteraTamanhoJanela(w, h):
     fAspect = w / h
     EspecificaParametrosVisualizacao()
 
+def Timer(value):
+    global rot_teapot
+    
+    rot_teapot += 1  
+    
+    glutPostRedisplay()
+    glutTimerFunc(30, Timer, 0)  # Configura o próximo intervalo de atualização
+
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
@@ -69,6 +83,7 @@ def main():
     glutCreateWindow("Visualizacao 3D")
     glutDisplayFunc(Desenha)
     glutReshapeFunc(AlteraTamanhoJanela)
+    glutTimerFunc(30, Timer, 0)  # Configura o primeiro intervalo de atualização
     Inicializa()
     glutMainLoop()
  
